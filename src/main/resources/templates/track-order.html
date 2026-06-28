@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PostInflux | Order Tracking Status</title>
+    <style>
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: #0f172a; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; color: #f8fafc; }
+        .tracking-card { background: #1e293b; border: 1px solid #334155; border-radius: 16px; width: 100%; max-width: 500px; padding: 40px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3); text-align: center; }
+        h2 { color: #10b981; margin-top: 0; }
+        .status-box { background: rgba(16,185,129,0.1); border: 1px solid #10b981; color: #10b981; padding: 15px; border-radius: 8px; font-weight: 700; margin: 20px 0; font-size: 18px; }
+        .info-group { text-align: left; margin-bottom: 15px; border-bottom: 1px solid #334155; padding-bottom: 10px; }
+        .info-label { font-size: 12px; color: #94a3b8; text-transform: uppercase; font-weight: 600; }
+        .info-value { font-size: 15px; margin-top: 4px; color: white; }
+        .back-btn { display: inline-block; background: #334155; color: white; text-decoration: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; margin-top: 20px; transition: background 0.2s; }
+        .back-btn:hover { background: #475569; }
+    </style>
+</head>
+<body>
+<div class="tracking-card">
+    <h2>Fulfillment Ledger Status</h2>
+    <p style="color: #94a3b8; font-size: 14px;">Dynamic verification tracking record</p>
+
+    <div class="status-box">✓ DISPATCHED SECURELY</div>
+
+    <div class="info-group">
+        <div class="info-label">Merchant Node Signature</div>
+        <div class="info-value" id="lblMerchant">Global Storefront Node</div>
+    </div>
+    <div class="info-group">
+        <div class="info-label">Asset Package Reference</div>
+        <div class="info-value" id="lblItem">Digital Confirmation Copy</div>
+    </div>
+    <div class="info-group">
+        <div class="info-label">Fulfillment Status Code</div>
+        <div class="info-value" style="font-family: monospace;">TX-NODE-OK</div>
+    </div>
+
+    <a href="/dashboard" class="back-btn">Return to Merchant Console</a>
+</div>
+
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    document.getElementById('lblMerchant').innerText = urlParams.get('merchant') || 'Global Storefront Node';
+    document.getElementById('lblItem').innerText = urlParams.get('item') || 'Digital Confirmation Copy';
+</script>
+</body>
+</html>

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PostInflux | Mail Hub</title>
+    <style>
+        :root {
+            --bubble-primary: #34d399;
+            --bubble-primary-hover: #10b981;
+            --bubble-bg: linear-gradient(135deg, #e0f2fe 0%, #e0e7ff 100%);
+            --bubble-card: rgba(255, 255, 255, 0.75);
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Jost', 'Segoe UI', system-ui, sans-serif; }
+
+        body {
+            background: var(--bubble-bg);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Ambient background floating bubbles */
+        .bubble-art { position: absolute; background: rgba(255, 255, 255, 0.4); border-radius: 50%; pointer-events: none; animation: floatUp 8s infinite ease-in-out; }
+        .ba-1 { width: 150px; height: 150px; top: 10%; left: 10%; animation-delay: 0s; }
+        .ba-2 { width: 250px; height: 250px; bottom: 10%; right: -5%; animation-delay: 2s; }
+        .ba-3 { width: 100px; height: 100px; bottom: 20%; left: 15%; animation-delay: 4s; }
+
+        @keyframes floatUp {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-20px) scale(1.05); }
+        }
+
+        .auth-bubble-card {
+            width: 100%;
+            max-width: 440px;
+            background: var(--bubble-card);
+            border: 2px solid rgba(255, 255, 255, 0.6);
+            border-radius: 32px;
+            padding: 40px 30px;
+            box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.08);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: 10;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .header-area { text-align: center; margin-bottom: 30px; }
+        .header-area h1 { color: #0f172a; font-size: 32px; font-weight: 800; margin-bottom: 8px; letter-spacing: -0.5px; }
+        .header-area p { color: var(--text-muted); font-size: 14px; line-height: 1.5; font-weight: 500; }
+
+        .form-panel { display: none; }
+        .form-panel.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-size: 13px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; }
+        input { width: 100%; padding: 14px 18px; background: white; border: 2px solid #e2e8f0; border-radius: 18px; color: var(--text-main); font-size: 14px; font-weight: 500; transition: all 0.2s ease; box-shadow: inset 0 2px 4px rgba(0,0,0,0.01); }
+        input:focus { outline: none; border-color: var(--bubble-primary); box-shadow: 0 0 0 4px rgba(52, 211, 153, 0.15); }
+
+        .action-btn { width: 100%; background: var(--bubble-primary); color: white; border: none; padding: 14px; border-radius: 18px; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.1); margin-top: 10px; box-shadow: 0 8px 16px -4px rgba(52, 211, 153, 0.4); }
+        .action-btn:hover { background: var(--bubble-primary-hover); transform: translateY(-2px); box-shadow: 0 12px 20px -4px rgba(52, 211, 153, 0.5); }
+        .action-btn:active { transform: translateY(0); }
+
+        .toggle-link { text-align: center; margin-top: 22px; font-size: 14px; color: var(--text-muted); font-weight: 500; }
+        .toggle-link span { color: #2563eb; cursor: pointer; font-weight: 700; text-decoration: none; transition: color 0.2s; }
+        .toggle-link span:hover { color: #1d4ed8; text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+<!-- Dynamic decorative background spheres -->
+<div class="bubble-art ba-1"></div>
+<div class="bubble-art ba-2"></div>
+<div class="bubble-art ba-3"></div>
+
+<div class="auth-bubble-card">
+    <div class="header-area">
+        <h1>PostInflux</h1>
+        <p>A centralized SaaS management console for streamlining secure email communications and digital product delivery.</p>
+    </div>
+
+    <!-- LOGIN FORM PANEL -->
+    <div id="loginPanel" class="form-panel active">
+        <form id="loginForm">
+            <div class="form-group">
+                <label>Workspace Username</label>
+                <input type="text" id="loginUser" placeholder="Enter your username" required>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="loginPass" placeholder="••••••••" required>
+            </div>
+            <button type="submit" class="action-btn">Open My Dashboard ➔</button>
+        </form>
+        <div class="toggle-link">First time here? <span onclick="toggleAuth(true)">Create a Store Account</span></div>
+    </div>
+
+    <!-- REGISTRATION FORM PANEL -->
+    <div id="registerPanel" class="form-panel">
+        <form id="registerForm">
+            <div class="form-group">
+                <label>Company / Brand Name</label>
+                <input type="text" id="regCompany" placeholder="e.g., Pandu Solutions" required>
+            </div>
+            <div class="form-group">
+                <label>Choose Login Username</label>
+                <input type="text" id="regUser" placeholder="Choose a username" required>
+            </div>
+            <div class="form-group">
+                <label>Create Secure Password</label>
+                <input type="password" id="regPass" placeholder="Choose a password" required>
+            </div>
+            <button type="submit" class="action-btn">Create My Workspace ✨</button>
+        </form>
+        <div class="toggle-link">Already have a store account? <span onclick="toggleAuth(false)">Log In</span></div>
+    </div>
+</div>
+
+<script>
+    function toggleAuth(showRegister) {
+        document.getElementById('loginPanel').classList.toggle('active', !showRegister);
+        document.getElementById('registerPanel').classList.toggle('active', showRegister);
+    }
+
+    document.getElementById('registerForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        localStorage.setItem('registered_user', document.getElementById('regUser').value);
+        localStorage.setItem('registered_pass', document.getElementById('regPass').value);
+        localStorage.setItem('registered_company', document.getElementById('regCompany').value);
+        alert('Your custom store profile was created successfully! Log in to get started.');
+        toggleAuth(false);
+    });
+
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const storedUser = localStorage.getItem('registered_user');
+        const storedPass = localStorage.getItem('registered_pass');
+        const inputUser = document.getElementById('loginUser').value;
+        const inputPass = document.getElementById('loginPass').value;
+
+        if (!storedUser || inputUser !== storedUser || inputPass !== storedPass) {
+            alert('Access Denied: Incorrect workspace credentials.');
+        } else {
+            window.location.href = '/dashboard';
+        }
+    });
+</script>
+</body>
+</html>
